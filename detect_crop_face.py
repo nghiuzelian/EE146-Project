@@ -6,6 +6,7 @@ import numpy as np
 
 # returns the cropped grayscale face
 def detect_crop_face(model, img):
+    # assumes img is aligned already using 3-point landmarks (eyes and nose) in function align_face
     (h, w) = img.shape[:2]
 
     blob = cv2.dnn.blobFromImage(
@@ -29,22 +30,8 @@ def detect_crop_face(model, img):
 
             # crops the face so that now we have only the stuff inside the bounding box
             cropped_face = cropped_face[startY:endY, startX:endX]
-
-            # delete later #
-            # # adds bounding box to original image
-            # img_copy = img.copy()
-            # cv2.rectangle(img_copy, (startX, startY),
-            #               (endX, endY),
-            #               (0, 255, 0),
-            #               2)
     
     # resizes the cropped image so that they are all standard
     cropped_face = cv2.resize(cropped_face, (128, 128))
-
-    # delete later #
-    # cv2.imshow("Original", img)
-    # cv2.imshow("Original Grayscale", gray_img)
-    # cv2.imshow("Original w/ Bounding Box", img_copy)
-    # cv2.imshow("Cropped", cropped_face)
 
     return cropped_face

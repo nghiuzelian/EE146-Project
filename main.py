@@ -6,7 +6,9 @@ from dataset_matrix import create_dataset_matrix
 from PCA import cov_matrix
 from PCA import eigen_decomp
 import MiniFaceID as FID
-from src.create_pca_subset import main
+from src.split_data import main
+from detect_crop_face import detect_crop_face
+from pathlib import Path
 
 modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"
 configFile = "models/deploy.prototxt"
@@ -92,8 +94,65 @@ print(f"Mean face: {miniFace.mean_face.shape}")
 print(f"Eigen values shape: {miniFace.eigen_vals.shape}")
 print(f"Eigen vectors shape: {miniFace.eigen_vects.shape}")
 print(f"Eigen faces shape: {miniFace.eigen_faces.shape}")
-#print(f"Authorized user template shape: {miniFace.auth_user_template.shape}")
 
+miniFace.set_auth_user()
+
+# now test on test images
+first_auth_user_path = "data/pca_test"
+genuine_dist = []
+impostor_dist = []
+identity = "Alejandro_Toledo"
+for person in os.listdir("data/pca_test"):
+        person_path = os.path.join("data/pca_test", person)
+        images = [
+                    f for f in os.listdir(person_path)
+                    if f.lower().endswith((".jpg", ".jpeg", ".png"))
+                ]
+        parts = Path(person_path).parts
+        new_identity = parts[2]
+        for i in range(len(images)):
+            photo = images[i]
+            image_path = os.path.join(person_path, photo)
+            photo = cv2.imread(image_path, cv2.IMREAD_COLOR)
+            crop_photo = detect_crop_face(dnn, photo)
+            if crop_photo is None:
+                continue
+            flat_crop = crop_photo.flatten().astype(np.float32)
+            new_photo_centered = flat_crop - miniFace.mean_face
+
+            # weights.shape = (1, N or k (here k = 5))
+            test_weight = new_photo_centered @ miniFace.eigen_faces
+
+            # compute the distance
+            dist = np.linalg.norm(test_weight - miniFace.auth_user_template)
+
+            if new_identity == "Alejandro_Toledo":
+                genuine_dist.append(dist)
+            elif(new_identity != "Alejandro_Toledo") and (new_identity != identity):
+                identity = new_identity
+                impostor_dist.append(dist)
+
+# now plot results, k on x-axis, distances on y-axis
+# Create y labels for separation
+genuine_y = np.zeros(len(genuine_dist))
+impostor_y = np.ones(len(impostor_dist))
+
+plt.scatter(genuine_dist, genuine_y, label="Genuine")
+plt.scatter(impostor_dist, impostor_y, label="Impostor")
+
+plt.xlabel("Distance to Template")
+plt.ylabel("Class")
+plt.yticks([0, 1], ["Genuine", "Impostor"])
+plt.legend()
+plt.title("Distance Distribution in PCA Space")
+
+plt.show()
+
+
+
+
+
+"""
 # train model with k = 10 eigen values/vectors
 miniFace.build_PCA(10)
 print(f"Reduced Matrix shape: {miniFace.red_cov_mat.shape}")
@@ -186,3 +245,5 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
+
+"""

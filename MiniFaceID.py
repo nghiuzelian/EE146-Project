@@ -36,7 +36,7 @@ class MiniFaceID:
     def set_auth_user(self):
         # get all the images for the first authorized user, 10 images, and compute its metrics
         auth_user = []
-        for i in range(10):
+        for i in range(31):
             auth_user.append(self.dataset_matrix[i])
         auth_user = np.vstack(auth_user)
 

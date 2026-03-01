@@ -19,18 +19,25 @@ class MiniFaceID:
         self.eigen_vects = []
         self.eigen_faces = []
         self.auth_user_template = None
+        self.dataset_matrix, self.num_identities = create_dataset_matrix(self.model, self.data)
+        self.num_images = self.dataset_matrix.shape[0]
+        print("========== DONE ==========")
+        print(f"Identities kept: {self.num_identities}")
+        print(f"Total images: {self.num_images}")
 
-    def train_model(self):
-        dataset_matrix = create_dataset_matrix(self.model, self.data)
-        self.red_cov_mat, self.X_centered, self.mean_face, self.eigen_vals, self.eigen_vects = PCA(dataset_matrix)
+    # builds PCA space based on how many eigen values and vectors we want
+    def build_PCA(self, k=5):
+        self.red_cov_mat, self.X_centered, self.mean_face, self.eigen_vals, self.eigen_vects = PCA(self.dataset_matrix, k)
         #    (16384, N or really k)  =   (16384, N) x (N, N or really k)
         # (will later change the eigen_vects to be (N, k) dimensions to only keep k-top eigen vectors)
         self.eigen_faces = self.X_centered.T @ self.eigen_vects
 
-        # get all the images for the authorized user, 5-10, and compute its metrics
+    # sets the first authorized user
+    def set_auth_user(self):
+        # get all the images for the first authorized user, 10 images, and compute its metrics
         auth_user = []
-        for i in range(4):
-            auth_user.append(dataset_matrix[i])
+        for i in range(10):
+            auth_user.append(self.dataset_matrix[i])
         auth_user = np.vstack(auth_user)
 
         # center each image of the authorized user

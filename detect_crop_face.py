@@ -32,6 +32,8 @@ def detect_crop_face(model, img):
             cropped_face = cropped_face[startY:endY, startX:endX]
     
     # resizes the cropped image so that they are all standard
+    if cropped_face is None or getattr(cropped_face, 'size', 0) == 0:
+        return None
     cropped_face = cv2.resize(cropped_face, (128, 128))
 
     return cropped_face

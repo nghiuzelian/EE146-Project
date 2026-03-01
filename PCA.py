@@ -1,9 +1,9 @@
 import cv2
 import numpy as np
 
-def PCA(dataset_matrix):
+def PCA(dataset_matrix, k):
     red_cov_mat, X_centered, mean_face = cov_matrix(dataset_matrix)
-    eigen_vals, eigen_vects = eigen_decomp(red_cov_mat)
+    eigen_vals, eigen_vects = eigen_decomp(red_cov_mat, k)
     return red_cov_mat, X_centered, mean_face, eigen_vals, eigen_vects
 
 # assumes each row of dataset_matrix is a flattened vector of the grayscale image of a specific face
@@ -27,7 +27,7 @@ def cov_matrix(dataset_matrix):
     return red_cov_mat, X_centered, mean_face
 
 # red_cov_mat has dimensions (N x N) where N is the number of faces in our dataset
-def eigen_decomp(red_cov_mat, k = 12):
+def eigen_decomp(red_cov_mat, k):
     # calculates the eigen values and vectors
     eigen_vals, eigen_vects = np.linalg.eigh(red_cov_mat)
 
@@ -35,5 +35,9 @@ def eigen_decomp(red_cov_mat, k = 12):
     idx = np.argsort(eigen_vals)[::-1]
     eigen_vals = eigen_vals[idx]
     eigen_vects = eigen_vects[:, idx]
+
+    # get top k eigen values and vectors
+    eigen_vals = eigen_vals[:k]
+    eigen_vects = eigen_vects[:, :k]
 
     return eigen_vals, eigen_vects

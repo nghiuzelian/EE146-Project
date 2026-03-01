@@ -1,10 +1,12 @@
 import cv2
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 from dataset_matrix import create_dataset_matrix
 from PCA import cov_matrix
 from PCA import eigen_decomp
 import MiniFaceID as FID
+from src.create_pca_subset import main
 
 modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"
 configFile = "models/deploy.prototxt"
@@ -69,17 +71,54 @@ print(f"Weight 1 shape: {weights[0].shape}")
 """
 
 # test MiniFaceID class
+image_paths = []
+for person in os.listdir("data/pca_train"):
+    person_path = os.path.join("data/pca_train", person)
+    for f in os.listdir(person_path):
+        if f.lower().endswith((".jpg", ".jpeg", ".png")):
+            image_path = os.path.join(person_path, f)
+            if image_path is None:
+                print(f"{image_path} is an empty image")
+            else:
+                image_paths.append(image_path)
 # test that class is constructed correctly (check the class attributes)
 miniFace = FID.MiniFaceID(image_paths)
 
-miniFace.train_model()
+# train model with k = 5 eigen values/vectors
+miniFace.build_PCA(5)
 print(f"Reduced Matrix shape: {miniFace.red_cov_mat.shape}")
 print(f"X_centered shape: {miniFace.X_centered.shape}")
 print(f"Mean face: {miniFace.mean_face.shape}")
 print(f"Eigen values shape: {miniFace.eigen_vals.shape}")
 print(f"Eigen vectors shape: {miniFace.eigen_vects.shape}")
 print(f"Eigen faces shape: {miniFace.eigen_faces.shape}")
-print(f"Authorized user template shape: {miniFace.auth_user_template.shape}")
+#print(f"Authorized user template shape: {miniFace.auth_user_template.shape}")
+
+# train model with k = 10 eigen values/vectors
+miniFace.build_PCA(10)
+print(f"Reduced Matrix shape: {miniFace.red_cov_mat.shape}")
+print(f"X_centered shape: {miniFace.X_centered.shape}")
+print(f"Mean face: {miniFace.mean_face.shape}")
+print(f"Eigen values shape: {miniFace.eigen_vals.shape}")
+print(f"Eigen vectors shape: {miniFace.eigen_vects.shape}")
+print(f"Eigen faces shape: {miniFace.eigen_faces.shape}")
+#print(f"Authorized user template shape: {miniFace.auth_user_template.shape}")
+
+# compute metrics: Precision, FAR, FRR, EER
+# do this using an Elbow Plot
+
+# train model with k = 20 eigen values/vectors
+miniFace.build_PCA(20)
+print(f"Reduced Matrix shape: {miniFace.red_cov_mat.shape}")
+print(f"X_centered shape: {miniFace.X_centered.shape}")
+print(f"Mean face: {miniFace.mean_face.shape}")
+print(f"Eigen values shape: {miniFace.eigen_vals.shape}")
+print(f"Eigen vectors shape: {miniFace.eigen_vects.shape}")
+print(f"Eigen faces shape: {miniFace.eigen_faces.shape}")
+#print(f"Authorized user template shape: {miniFace.auth_user_template.shape}")
+
+# compute metrics: Precision, FAR, FRR, EER
+# do this using an Elbow Plot
 
 # test that we can enroll someone new
 cap = cv2.VideoCapture(0)
@@ -147,8 +186,3 @@ while True:
 
 cap.release()
 cv2.destroyAllWindows()
-
-
-
-
-# test that a new authorized user can be enrolled

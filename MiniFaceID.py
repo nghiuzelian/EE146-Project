@@ -71,5 +71,44 @@ class MiniFaceID:
 
     def verify_face():
         # verifies if the person is the authorized user or not. Do this by comparing user's template to authorized user's template
+        """def verify_face(self, photos, threshold, min_valid=3):
+    
+        photos: list of BGR images (frames) captured from webcam
+        threshold: float, Euclidean distance threshold in PCA space
+        min_valid: requires at least this many successfully detected/cropped faces
+        returns: (is_authorized: bool, distance: float, probe_template: np.ndarray or None)
+        
+
+        if self.mean_face is None or self.eigen_faces is None or len(self.eigen_faces) == 0:
+            raise ValueError("PCA space not built. Call build_PCA(k) first.")
+
+        if self.auth_user_template is None:
+            raise ValueError("No authorized user template set. Call set_auth_user() or enroll_face().")
+
+        photos_matrix = []
+        valid = 0
+
+        for photo in photos:
+            crop = detect_crop_face(self.model, photo)  # returns 128x128 grayscale or None
+            if crop is None:
+                continue
+
+            flat = crop.flatten().astype(np.float32)  # (16384,)
+            photos_matrix.append(flat)
+            valid += 1
+
+        if valid < min_valid:
+            # Not enough usable frames to verify reliably
+            return (False, float("inf"), None)
+
+        photos_matrix = np.vstack(photos_matrix)              # (valid, 16384)
+        centered = photos_matrix - self.mean_face             # (valid, 16384)
+        weights = centered @ self.eigen_faces                 # (valid, k)
+        probe_template = np.mean(weights, axis=0)             # (k,)
+
+        dist = np.linalg.norm(probe_template - self.auth_user_template)  # Euclidean
+        is_auth = dist <= threshold
+
+        return (is_auth, float(dist), probe_template)"""
         response = False
         return response

@@ -18,6 +18,34 @@ dnn = cv2.dnn.readNetFromCaffe(configFile, modelFile)
 image_paths = ['train/n000002/0009_01.jpg', 'train/n000003/0003_01.jpg', 'train/n000004/0006_01.jpg', 'train/n000005/0006_01.jpg']
 
 """
+# defines how many photos are taken on keypress, and allows early exit of the program thru q keypress
+def capture_photos(cap, num_photos=8, delay_frames=6, window="Capture"):
+    photos = []
+    frame_count = 0
+
+    while len(photos) < num_photos:
+        ret, frame = cap.read()
+        if not ret:
+            break
+
+        cv2.imshow(window, frame)
+
+        # Grab one frame every few frames (reduces near-duplicates)
+        if frame_count % delay_frames == 0:
+            photos.append(frame.copy())
+
+        frame_count += 1
+
+        # Allow early exit
+        if cv2.waitKey(1) & 0xFF == ord("q"):
+            break
+
+    cv2.destroyWindow(window)
+    return photos
+"""
+
+
+"""
 dataset_matrix = create_dataset_matrix(dnn, image_paths)
 print(f'Dataset Matrix shape: {dataset_matrix.shape}')
 red_cov_mat, X_centered, mean_face = cov_matrix(dataset_matrix)
@@ -155,7 +183,43 @@ plt.title("Distance Distribution in PCA Space (k=5)")
 plt.show()
 
 
+"""
+# actual process for webcam capture, w tunable threshold
+# r should allow for initial capture of the user, while v should take photos and compare to data for verification
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    raise RuntimeError("Could not open webcam.")
 
+threshold = 2500  # placeholder - tune this later
+
+print("\nControls: [r]=register/enroll  [v]=verify  [q]=quit\n")
+
+while True:
+    ret, frame = cap.read()
+    if not ret:
+        break
+
+    cv2.imshow("MiniFaceID", frame)
+    key = cv2.waitKey(1) & 0xFF
+
+    if key == ord("r"):
+        print("Registering... capturing frames")
+        frames = capture_photos(cap, num_photos=8, window="Enroll")
+        miniFace.enroll_face(frames)
+        print("Enrollment done. Authorized template updated.")
+
+    elif key == ord("v"):
+        print("Verifying... capturing frames")
+        frames = capture_photos(cap, num_photos=8, window="Verify")
+        ok, dist, _ = miniFace.verify_face(frames, threshold=threshold)
+        print(("AUTHORIZED" if ok else "DENIED"), f"(dist={dist:.2f})")
+
+    elif key == ord("q"):
+        break
+
+cap.release()
+cv2.destroyAllWindows()
+"""
 
 """
 # train model with k = 10 eigen values/vectors

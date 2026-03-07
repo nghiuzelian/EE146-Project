@@ -123,14 +123,15 @@ print(f"Eigen values shape: {miniFace.eigen_vals.shape}")
 print(f"Eigen vectors shape: {miniFace.eigen_vects.shape}")
 print(f"Eigen faces shape: {miniFace.eigen_faces.shape}")
 
-miniFace.set_auth_user()
 
 # now test on test images
 first_auth_user_path = "data/pca_test"
 genuine_dist = []
 impostor_dist = []
 identity = "Alejandro_Toledo"
+# each user in the test set should be the authorized user at one point
 for person in os.listdir("data/pca_test"):
+        i = 0
         person_path = os.path.join("data/pca_test", person)
         images = [
                     f for f in os.listdir(person_path)
@@ -138,6 +139,8 @@ for person in os.listdir("data/pca_test"):
                 ]
         parts = Path(person_path).parts
         new_identity = parts[2]
+        impostor_dists = []
+        genuine_dists = []
         for i in range(len(images)):
             photo = images[i]
             image_path = os.path.join(person_path, photo)
@@ -155,10 +158,13 @@ for person in os.listdir("data/pca_test"):
             dist = np.linalg.norm(test_weight - miniFace.auth_user_template)
 
             if new_identity == "Alejandro_Toledo":
-                genuine_dist.append(dist)
-            elif(new_identity != "Alejandro_Toledo") and (new_identity != identity):
-                identity = new_identity
-                impostor_dist.append(dist)
+                genuine_dists.append(dist)
+            elif(new_identity != "Alejandro_Toledo"):
+                impostor_dists.append(dist)
+        if impostor_dists:
+            impostor_dist.append(sum(impostor_dists) / len(impostor_dists))
+        if genuine_dists:
+            genuine_dist.append(sum(genuine_dists) / len(genuine_dists))
 
 # now plot results, k on x-axis, distances on y-axis
 # Create y labels for separation
@@ -172,7 +178,7 @@ plt.xlabel("Distance to Template")
 plt.ylabel("Class")
 plt.yticks([0, 1], ["Genuine", "Impostor"])
 plt.legend()
-plt.title("Distance Distribution in PCA Space")
+plt.title("Distance Distribution in PCA Space (k=5)")
 
 plt.show()
 

@@ -1,30 +1,15 @@
-import numpy as np
-thresholds = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
+from train.compute_metrics_k_20 import read_into_2d
 
-def read_into_2d(filepath):
-    matrix_rows = []
-    
-    with open(filepath, 'r') as f:
-        for line in f:
-            if 'k =' in line or not line.strip():
-                continue
-            
-            clean_line = line.strip().rstrip(',')
-            
-            row_values = [float(x) for x in clean_line.split(',')]
+thresholds = [0.1, 0.2, 0.3, 0.4, 0.5, 1, 1.5, 2]
 
-            matrix_rows.append(row_values)
-            
-    return np.array(matrix_rows)
-
-dist_mat = read_into_2d('train/distances/k_20.csv')
+dist_mat = read_into_2d('train/distances/k_10.csv')
 print(f"Matrix Shape: {dist_mat.shape}")
 
 rows = len(dist_mat)
 cols = len(dist_mat[0])
 
-with open(f"train/results/k_20_metrics.csv", "w") as f:
-    f.write(f"k = 20\n")
+with open(f"train/results/k_10_metrics.csv", "w") as f:
+    f.write(f"k = 10\n")
     for t in thresholds:
         tp = 0
         fp = 0

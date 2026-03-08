@@ -30,7 +30,7 @@ def read_metrics(filepath):
 # first value of metrics tells us how many principal components were used
 # 2nd value is the different threshold values
 # 3rd and 4th values are the TPR and FPR rates associated to that given threshold
-metrics = read_metrics('results/k_20_metrics.csv')
+metrics = read_metrics('train/results/k_20_metrics.csv')
 fpr = metrics[3]
 tpr = metrics[2]
 thresholds = metrics[1]
@@ -57,9 +57,5 @@ plt.ylabel('True Positive Rate (TPR)')
 plt.title(f'ROC Curve Colored by Threshold (k = {k})')
 plt.grid(True, alpha=0.2)
 
-dest_dir = "plots"
-if not os.path.exists(dest_dir):
-    os.makedirs(dest_dir)
-
-plt.savefig('plots/ROC_Curve_k20.png', dpi=300, bbox_inches='tight')
+plt.savefig('train/plots/ROC_Curve_k20.png', dpi=300, bbox_inches='tight')
 plt.show()

@@ -1,15 +1,15 @@
-from compute_metrics_k_20 import read_into_2d
+from train.compute_metrics_k_20 import read_into_2d
 
 thresholds = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4]
 
-dist_mat = read_into_2d('distances/k_50.csv')
+dist_mat = read_into_2d('train/distances/k_50.csv')
 print(f"Matrix Shape: {dist_mat.shape}")
 
 rows = len(dist_mat)
 cols = len(dist_mat[0])
 
-with open(f"results/k_50_metrics.csv", "w") as f:
-    f.write(f"k = 150\n")
+with open(f"train/results/k_50_metrics.csv", "w") as f:
+    f.write(f"k = 50\n")
     for t in thresholds:
         tp = 0
         fp = 0

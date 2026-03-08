@@ -25,7 +25,8 @@ def create_dataset_matrix(model, image_paths):
             if crop_img is None:
                 continue
             flat_crop = crop_img.flatten().astype(np.float32)
-            faces.append(flat_crop)
+            norm_crop = flat_crop / 255.0
+            faces.append(norm_crop)
 
     faces = np.vstack(faces)
     return faces, num_identities

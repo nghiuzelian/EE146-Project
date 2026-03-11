@@ -20,3 +20,5 @@ To ensure our PCA math and feature extraction work the same on everyone's comput
 ## Expected Results
 * Live demonstration of user registration and login.
 * PCA result plots showing how faces are verified in "Face Space".
+
+Drag the pca_train and pca_test data into the data folder

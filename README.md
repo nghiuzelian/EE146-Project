@@ -11,6 +11,11 @@ To ensure our PCA math and feature extraction work the same on everyone's comput
    - Mac/Linux: `source venv/bin/activate`
 4. **Install dependencies**:
    - `pip install -r requirements.txt`
+  
+5. Run in terminal
+   - `python main.py`
+   - This may take some time
+  
 
 ## 🎯 Project Goals
 * **Task**: Face verification using Computer Vision.
@@ -21,4 +26,4 @@ To ensure our PCA math and feature extraction work the same on everyone's comput
 * Live demonstration of user registration and login.
 * PCA result plots showing how faces are verified in "Face Space".
 
-Drag the pca_train and pca_test data into the data folder
+

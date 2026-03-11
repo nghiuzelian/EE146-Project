@@ -1,7 +1,6 @@
 import cv2
 import os
 import MiniFaceID as FID
-from pathlib import Path
 import platform
 
 modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"

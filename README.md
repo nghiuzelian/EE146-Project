@@ -12,7 +12,7 @@ To ensure our PCA math and feature extraction work the same on everyone's comput
 4. **Install dependencies**:
    - `pip install -r requirements.txt`
   
-5. Run in terminal
+5. **Run in terminal**
    - `python main.py`
    - This may take some time
   

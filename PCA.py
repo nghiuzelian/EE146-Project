@@ -9,14 +9,6 @@ def PCA(dataset_matrix, k):
 def cov_matrix(dataset_matrix):
     # computes the mean face over the rows, each row pertains to a face
     mean_face = np.mean(dataset_matrix, axis=0)
-    
-    # delete later
-    # reshapes mean face to 128x128
-    # mean_face_img128 = mean_face.reshape((128, 128))
-    # mean_face_img512 = cv2.resize(mean_face_img128, (512, 512))
-    # cv2.imshow("Mean Face", mean_face_img512.astype(np.uint8))
-    # cv2.waitKey(0)
-    # cv2.destroyAllWindows()
 
     # normalizes each face
     X_centered = dataset_matrix - mean_face

@@ -83,7 +83,7 @@ class MiniFaceID:
             if crop is None:
                 continue
 
-            flat = crop.flatten().astype(np.float32)  # (16384,)
+            flat = crop.flatten().astype(np.float32)
             norm_crop = flat / 255.0
             photos_matrix.append(norm_crop)
             valid += 1
@@ -92,10 +92,10 @@ class MiniFaceID:
             # Not enough usable frames to verify reliably
             return (False, float("inf"), None)
 
-        photos_matrix = np.vstack(photos_matrix)              # (valid, 16384)
-        centered = photos_matrix - self.mean_face             # (valid, 16384)
-        weights = centered @ self.eigen_faces                 # (valid, k)
-        probe_template = np.mean(weights, axis=0)             # (k,)
+        photos_matrix = np.vstack(photos_matrix)
+        centered = photos_matrix - self.mean_face
+        weights = centered @ self.eigen_faces
+        probe_template = np.mean(weights, axis=0)
         probe_scaled = self.scaler.transform(probe_template.reshape(1, -1)).flatten()
 
         dist = np.linalg.norm(probe_scaled - self.auth_user_template)  # Euclidean

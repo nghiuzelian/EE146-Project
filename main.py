@@ -46,8 +46,6 @@ for person in os.listdir("data/pca_train"):
             else:
                 image_paths.append(image_path)
 
-# test that class is constructed correctly (check the class attributes)
-
 miniFace = FID.MiniFaceID(image_paths)
 miniFace.build_PCA()
 

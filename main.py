@@ -1,14 +1,8 @@
 import cv2
 import os
-import numpy as np
-import matplotlib.pyplot as plt
-from dataset_matrix import create_dataset_matrix
-from PCA import cov_matrix
-from PCA import eigen_decomp
 import MiniFaceID as FID
-from src.split_data import main
-from detect_crop_face import detect_crop_face
 from pathlib import Path
+import platform
 
 modelFile = "models/res10_300x300_ssd_iter_140000.caffemodel"
 configFile = "models/deploy.prototxt"
@@ -60,7 +54,14 @@ miniFace.build_PCA()
 
 # actual process for webcam capture, w tunable threshold
 # r should allow for initial capture of the user, while v should take photos and compare to data for verification
-cap = cv2.VideoCapture(0)
+cap = None
+current_os = platform.system()
+if current_os == "Windows":
+    cap = cv2.VideoCapture(0)
+elif current_os == "Darwin":
+    cap = cv2.VideoCapture(0, cv2.CAP_AVFOUNDATION)
+else:
+    cap = cv2.VideoCapture(0)
 if not cap.isOpened():
     raise RuntimeError("Could not open webcam.")
 
